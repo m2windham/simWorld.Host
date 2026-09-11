@@ -30,6 +30,12 @@ namespace SimWorldHost
 
         private static string Format(GodViewSnapshot s)
         {
+            // ContentLoaded distinguishes "nothing loaded" from "a civilization that has not
+            // started" — the two used to be indistinguishable from this side. See
+            // CoreContentBootstrap for why this should never actually be false by the time this
+            // runs, kept here anyway as the honest thing to show if it somehow were.
+            if (!s.ContentLoaded) return "Core content not loaded.";
+
             return $"Tick {s.TicksGame} — {s.DateLabel}\n"
                 + $"Settlements: {s.Civilization.SettlementCount}  "
                 + $"Population: {s.Civilization.TotalPopulation}\n"

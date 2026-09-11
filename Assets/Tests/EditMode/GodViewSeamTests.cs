@@ -21,6 +21,8 @@ namespace SimWorldHost.Tests
         {
             Assert.Greater(DefDatabase<EdictDef>.DefCount, 0,
                 "Content failed to load, or loaded empty — see CoreContentBootstrap.");
+            Assert.IsTrue(GodViewSnapshot.Capture().ContentLoaded,
+                "GodViewSnapshot.ContentLoaded should agree with the DefDatabase actually having content.");
         }
 
         [Test]
