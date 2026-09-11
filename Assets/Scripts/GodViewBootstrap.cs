@@ -17,6 +17,8 @@ namespace SimWorldHost
 
         private float _nextRefresh;
 
+        private void Awake() => CoreContentBootstrap.EnsureLoaded();
+
         private void Update()
         {
             if (Time.unscaledTime < _nextRefresh) return;
