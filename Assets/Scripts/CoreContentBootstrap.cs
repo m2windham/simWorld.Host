@@ -27,7 +27,7 @@ namespace SimWorldHost
     /// before it) is a timing this session verified working live rather than a guess. The def-count
     /// check below exists specifically so that failure mode cannot go quiet again.
     /// </summary>
-    internal static class CoreContentBootstrap
+    public static class CoreContentBootstrap
     {
         public static void EnsureLoaded()
         {
