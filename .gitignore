@@ -70,3 +70,15 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Unity writes a crash-recovery copy of the open scene here after an unclean shutdown.
+# Restoring it is what poisoned three launches in a row, so it must never reach the repo.
+/[Aa]ssets/_[Rr]ecovery/
+/[Aa]ssets/_[Rr]ecovery.meta
+
+# Screenshots taken through the MCP bridge while checking the renderer.
+/[Aa]ssets/[Ss]creenshots/
+/[Aa]ssets/[Ss]creenshots.meta
+
+# Hand-made backups of package manifests, kept locally while debugging imports.
+*.bak
