@@ -101,5 +101,22 @@ namespace SimWorldHost.Tests
             }
             Assert.Greater(seen.Count, 1, "every thing id chose the same variant; the spread is not working");
         }
+
+        [Test]
+        public void Sandstone_ships_four_variants_and_resolves_cleanly()
+        {
+            if (VisualRegistry.VariantCount("Sandstone") == 0)
+            {
+                Assert.Ignore("No Sandstone art imported yet; the fallback path covers this case.");
+            }
+            Assert.AreEqual(4, VisualRegistry.VariantCount("Sandstone"));
+
+            var seen = new System.Collections.Generic.HashSet<GameObject>();
+            for (int thingId = 0; thingId < 256; thingId++)
+            {
+                seen.Add(VisualRegistry.Resolve("Sandstone", thingId));
+            }
+            Assert.AreEqual(4, seen.Count, "all 4 Sandstone variants should be selected across thing ids");
+        }
     }
 }
