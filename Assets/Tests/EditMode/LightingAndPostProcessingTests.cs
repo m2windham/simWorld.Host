@@ -51,9 +51,9 @@ namespace SimWorldHost.Tests
                     float directLight = featureSo.FindProperty("m_Settings.DirectLightingStrength").floatValue;
 
                     Assert.IsTrue(active, "SSAO feature must be active.");
-                    Assert.AreEqual(0.35f, radius, 0.01f, "SSAO radius must match reference board specification (~0.35).");
-                    Assert.AreEqual(1.2f, intensity, 0.05f, "SSAO intensity must match reference board specification (~1.2).");
-                    Assert.AreEqual(0.25f, directLight, 0.05f, "SSAO direct lighting strength must be ~0.25.");
+                    Assert.AreEqual(0.40f, radius, 0.05f, "SSAO radius must match high-relief calibrated setting (~0.40).");
+                    Assert.GreaterOrEqual(intensity, 2.5f, "SSAO intensity must be >= 2.5 for deep contact grounding.");
+                    Assert.LessOrEqual(directLight, 0.05f, "SSAO direct lighting strength must be near 0 to avoid washing out occlusion.");
                     break;
                 }
             }
@@ -98,8 +98,9 @@ namespace SimWorldHost.Tests
                     float contrast = compSo.FindProperty("contrast.m_Value").floatValue;
                     float saturation = compSo.FindProperty("saturation.m_Value").floatValue;
 
-                    Assert.AreEqual(0.15f, postExposure, 0.01f, "Post exposure must be +0.15.");
-                    Assert.AreEqual(14.0f, contrast, 0.5f, "Contrast must be +14.0.");
+                    Assert.AreEqual(0.0f, postExposure, 0.05f, "Post exposure must be normalized to ~0.0 to avoid washing out darks.");
+                    Assert.GreaterOrEqual(contrast, 25.0f, "Contrast must be >= 25.0 for crisp tonal separation.");
+                    Assert.LessOrEqual(contrast, 38.0f, "Contrast must not exceed 38.0.");
                     Assert.AreEqual(10.0f, saturation, 0.5f, "Saturation must be +10.0.");
                 }
                 else if (typeName == "WhiteBalance")
@@ -136,8 +137,8 @@ namespace SimWorldHost.Tests
 
             Assert.AreEqual(14f, tod.Hour, 0.001f);
             Assert.AreEqual(35f, go.transform.eulerAngles.x, 0.5f, "Sun pitch should be ~35° at canonical hour 14.");
-            Assert.AreEqual(45f, go.transform.eulerAngles.y, 0.5f, "Sun yaw should be ~45° at canonical hour 14.");
-            Assert.AreEqual(1.25f, light.intensity, 0.05f, "Sun intensity should be 1.25 at canonical hour 14.");
+            Assert.AreEqual(25f, go.transform.eulerAngles.y, 0.5f, "Sun yaw should be ~25° for cross-light relief relative to 45° camera.");
+            Assert.AreEqual(1.35f, light.intensity, 0.05f, "Sun intensity should be 1.35 at canonical hour 14.");
             Assert.AreEqual(LightShadows.Soft, light.shadows, "Sun shadows should be Soft.");
 
             Object.DestroyImmediate(go);

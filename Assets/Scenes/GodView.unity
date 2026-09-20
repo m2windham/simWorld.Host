@@ -20,9 +20,9 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.4941, g: 0.6353, b: 0.7216, a: 1}
-  m_AmbientEquatorColor: {r: 0.6196, g: 0.5412, b: 0.4549, a: 1}
-  m_AmbientGroundColor: {r: 0.3412, g: 0.2745, b: 0.2078, a: 1}
+  m_AmbientSkyColor: {r: 0.18039216, g: 0.24313726, b: 0.2784314, a: 1}
+  m_AmbientEquatorColor: {r: 0.21960784, g: 0.1882353, b: 0.15686275, a: 1}
+  m_AmbientGroundColor: {r: 0.10980392, g: 0.08627451, b: 0.06666667, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
@@ -663,7 +663,7 @@ Light:
   serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 0.9451, b: 0.8392, a: 1}
-  m_Intensity: 1.25
+  m_Intensity: 1.35
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -674,7 +674,7 @@ Light:
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
-    m_NormalBias: 0.35
+    m_NormalBias: 0.15
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1
@@ -725,7 +725,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1336025258}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2778159, y: 0.3649717, z: -0.115075134, w: 0.88111955}
+  m_LocalRotation: {x: 0.29357788, y: 0.20642215, z: -0.06508465, w: 0.9311101}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -778,13 +778,13 @@ MonoBehaviour:
   _enableCycle: 0
   _dayLengthSeconds: 120
   _basePitch: 35
-  _baseYaw: 45
-  _baseIntensity: 1.25
+  _baseYaw: 25
+  _baseIntensity: 1.35
   _sunColor: {r: 1, g: 0.9451, b: 0.8392, a: 1}
   _manageAmbient: 1
-  _skyColor: {r: 0.4941, g: 0.6353, b: 0.7216, a: 1}
-  _equatorColor: {r: 0.6196, g: 0.5412, b: 0.4549, a: 1}
-  _groundColor: {r: 0.3412, g: 0.2745, b: 0.2078, a: 1}
+  _skyColor: {r: 0.18039216, g: 0.24313726, b: 0.2784314, a: 1}
+  _equatorColor: {r: 0.21960784, g: 0.1882353, b: 0.15686275, a: 1}
+  _groundColor: {r: 0.10980392, g: 0.08627451, b: 0.06666667, a: 1}
 --- !u!1 &1736695870
 GameObject:
   m_ObjectHideFlags: 0

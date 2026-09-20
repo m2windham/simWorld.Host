@@ -42,6 +42,24 @@ Benchmarked in Play Mode under identical controlled camera framing (`Pivot = (10
 
 ---
 
+## 2B. Legibility & Local Relief Gate (Claude Review Calibration)
+
+Following Claude's empirical audit (`origin/claude/lane-1-legibility-check`), local relief on the central 800×450 terrain crop was calibrated to eliminate flatness and ensure surface 3D readability at god zoom:
+
+| Metric | Controlled URP (Flat Cubes) | Initial Lane 1 (Collinear Sun) | Calibrated Lane 1 (Cross-Light Yaw 25°) | Mandated Floor |
+| :--- | :--- | :--- | :--- | :--- |
+| **Local Relief (ViewSize 60)** | 2.3437 | 1.1206 (FAIL) | **2.2236** (PASS) | $\ge 2.20$ |
+| **Local Relief (Full Map)** | N/A | 0.8422 (FAIL) | **3.4064** (PASS) | $\ge 2.20$ |
+| **Overall Contrast (stdev)** | 23.11 | 14.9651 | **22.9421** | ~23.0 |
+
+### Key Calibration Adjustments:
+- **Sun Yaw**: Rotated from $45^\circ$ (collinear with isometric camera) to $25^\circ$ ($20^\circ$ cross-light offset), casting crisp facet shadows across slopes.
+- **Ambient Fill**: Darkened trilight fill (Sky `#2E3E47`, Equator `#383028`, Ground `#1C1611`) so shadows retain tonal depth.
+- **SSAO**: Configured `DirectLightingStrength = 0.0`, `Intensity = 3.0`, `Radius = 0.40` on `UniversalRenderer.asset`.
+- **Global Volume**: Normalized `PostExposure = 0.0` and calibrated `Contrast = 35.0` on `GlobalVolumeProfile.asset`.
+
+---
+
 ## 3. Visual Verification
 
 ![Lane 1 Lighting & Sandstone Rocks Game View](baseline/lane1_rocks_gameview.png)

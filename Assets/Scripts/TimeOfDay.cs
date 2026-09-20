@@ -26,15 +26,15 @@ namespace SimWorldHost
 
         [Header("Canonical Baseline (Hour 14)")]
         [SerializeField] private float _basePitch = 35f;
-        [SerializeField] private float _baseYaw = 45f;
-        [SerializeField] private float _baseIntensity = 1.25f;
+        [SerializeField] private float _baseYaw = 25f;
+        [SerializeField] private float _baseIntensity = 1.35f;
         [SerializeField] private Color _sunColor = new Color(1f, 0.9451f, 0.8392f, 1f); // #FFF1D6
 
         [Header("Ambient Lighting (Trilight)")]
         [SerializeField] private bool _manageAmbient = true;
-        [SerializeField] private Color _skyColor = new Color(0.4941f, 0.6353f, 0.7216f, 1f);     // #7EA2B8
-        [SerializeField] private Color _equatorColor = new Color(0.6196f, 0.5412f, 0.4549f, 1f); // #9E8A74
-        [SerializeField] private Color _groundColor = new Color(0.3412f, 0.2745f, 0.2078f, 1f);  // #574635
+        [SerializeField] private Color _skyColor = new Color(0.1804f, 0.2431f, 0.2784f, 1f);     // #2E3E47
+        [SerializeField] private Color _equatorColor = new Color(0.2196f, 0.1882f, 0.1569f, 1f); // #383028
+        [SerializeField] private Color _groundColor = new Color(0.1098f, 0.0863f, 0.0667f, 1f);  // #1C1611
 
         /// <summary>
         /// Current hour of the day (0–24). Setting this recalculates sun position and ambient values.
