@@ -211,8 +211,7 @@ namespace SimWorldHost
 
             if (_terrainMat == null)
             {
-                Shader shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Texture");
-                _terrainMat = new Material(shader) { name = "SimWorld/TerrainMat" };
+                _terrainMat = new Material(RequireShader("Universal Render Pipeline/Unlit")) { name = "SimWorld/TerrainMat" };
             }
             _terrainMat.mainTexture = _terrainTex;
         }
@@ -246,8 +245,7 @@ namespace SimWorldHost
 
             if (_roofMat == null)
             {
-                Shader shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Transparent");
-                _roofMat = new Material(shader) { name = "SimWorld/RoofMat" };
+                _roofMat = new Material(RequireShader("Universal Render Pipeline/Unlit")) { name = "SimWorld/RoofMat" };
                 if (_roofMat.HasProperty("_Surface"))
                 {
                     _roofMat.SetFloat("_Surface", 1.0f); // Transparent
@@ -573,7 +571,7 @@ namespace SimWorldHost
 
             // One material per batch key, so colour is an ordinary material property and never an
             // instancing-buffer question. Per-batch is exactly the granularity the brief asks for.
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Universal Render Pipeline/Simple Lit") ?? Shader.Find("Standard");
+            Shader shader = RequireShader("Universal Render Pipeline/Lit");
             mat = new Material(shader) { name = "SimWorld/" + batchKey, enableInstancing = true };
             Color color = StableColor(VisualRegistry.BaseNameOf(batchKey));
             if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
@@ -637,6 +635,17 @@ namespace SimWorldHost
             mesh.triangles = new[] { 0, 1, 2, 0, 2, 3, 0, 2, 1, 0, 3, 2 };
             mesh.RecalculateBounds();
             return mesh;
+        }
+
+        private static Shader RequireShader(string name)
+        {
+            Shader shader = Shader.Find(name);
+            if (shader == null)
+                throw new System.InvalidOperationException(
+                    $"Shader '{name}' not found. It is almost certainly a Built-in " +
+                    "pipeline shader that does not exist under the active render " +
+                    "pipeline. Renderer materials must name URP shaders.");
+            return shader;
         }
 
         private static Mesh BuiltinMesh(PrimitiveType type)
