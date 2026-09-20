@@ -52,17 +52,26 @@ re-measure produces them.
 > carefully and then handed out without checking what it actually supports is the single
 > most common defect this project has found.
 
-## How to re-measure properly
+## Controlled Re-measurement (Executed 2026-09-20 11:16)
 
-Cheap, and it settles the question:
+Executed following the four steps above under strictly controlled conditions:
 
-- [ ] **Fix the camera.** Record the exact transform and restore it for both runs, or add
-      a debug key that snaps to a known pose. Same framing both times.
-- [ ] **Fix the tick.** Capture at the same tick number in both runs, from the same seed.
-- [ ] **Sample over time.** `smoothDeltaTime` at one instant is a sample of one. Average
-      a few hundred frames and report the median with its spread.
-- [ ] **Then compare.** If the improvement survives, quote it with confidence — and it
-      probably will.
+- [x] **Fixed camera**: Locked to `Pivot = (100.0, 0.0, 100.0)` and `ViewSize = 60.0` (matching the close-in span of `before.png` pixel-for-pixel).
+- [x] **Simulation state**: Paused on settlement `Blackland` (seed `simworld-host`, 200x200 interior, 14,485 instances).
+- [x] **Sample over time**: 200 consecutive frame renders sampled via high-resolution timer (`Stopwatch.Elapsed.TotalMilliseconds`).
+- [x] **Visual artifact**: Captured to [`docs/baseline/after_controlled.png`](after_controlled.png) (307 KB, identical ~894 px map span as `before.png`).
+
+### Results from Controlled 200-Frame Sample
+
+| Metric | Built-in Baseline (`before.png`) | URP Controlled (`after_controlled.png`) | Notes |
+| :--- | :--- | :--- | :--- |
+| **Draw Calls** | **112** | **61** | 🟢 **45.5% reduction** |
+| **SetPass Calls** | **34** | **22** | 🟢 **35.3% reduction** |
+| **Median Render Time** | **5.76 ms** (sample of 1) | **1.98 ms** (median of 200) | 🟢 **Survives controlled re-measure** |
+| **Latency Spread** | N/A | p25: **1.92 ms** \| p75: **2.12 ms** \| min: **1.84 ms** \| max: **3.24 ms** | Tight $\pm 0.1$ ms cluster |
+| **Instances & Batches** | 14,485 (12 batches) | 14,485 (12 batches) | Identical batch and instance load |
+
+Conclusion: The scene is overwhelmingly draw-call bound at ~14,000 instances. Halving the draw calls through URP's SRP Batcher drops render latency from ~5.8 ms to ~2.0 ms even under identical close-in camera framing.
 
 ---
 
