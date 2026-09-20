@@ -56,10 +56,11 @@ re-measure produces them.
 
 Executed following the four steps above under strictly controlled conditions:
 
-- [x] **Fixed camera**: Locked to `Pivot = (100.0, 0.0, 100.0)` and `ViewSize = 60.0` (matching the close-in span of `before.png` pixel-for-pixel).
+- [x] **Fixed camera**: Locked to `Pivot = (100.0, 0.0, 100.0)`, `ViewSize = 60.0`, held constant across all
+      200 samples. (It does **not** match `before.png`'s framing — see the note below.)
 - [x] **Simulation state**: Paused on settlement `Blackland` (seed `simworld-host`, 200x200 interior, 14,485 instances).
 - [x] **Sample over time**: 200 consecutive frame renders sampled via high-resolution timer (`Stopwatch.Elapsed.TotalMilliseconds`).
-- [x] **Visual artifact**: Captured to [`docs/baseline/after_controlled.png`](after_controlled.png) (307 KB, identical ~894 px map span as `before.png`).
+- [x] **Visual artifact**: Captured to [`docs/baseline/after_controlled.png`](after_controlled.png) (307 KB).
 
 ### Results from Controlled 200-Frame Sample
 
@@ -71,7 +72,39 @@ Executed following the four steps above under strictly controlled conditions:
 | **Latency Spread** | N/A | p25: **1.92 ms** \| p75: **2.12 ms** \| min: **1.84 ms** \| max: **3.24 ms** | Tight $\pm 0.1$ ms cluster |
 | **Instances & Batches** | 14,485 (12 batches) | 14,485 (12 batches) | Identical batch and instance load |
 
-Conclusion: The scene is overwhelmingly draw-call bound at ~14,000 instances. Halving the draw calls through URP's SRP Batcher drops render latency from ~5.8 ms to ~2.0 ms even under identical close-in camera framing.
+### The framing is not matched — and that makes the result stronger
+
+The line above originally claimed this capture shares `before.png`'s ~894 px map span. It does
+not. Measured off the committed PNGs, counting terrain pixels below the UI band:
+
+| Capture | Terrain pixels | Share of a 1920×1080 frame |
+| :--- | ---: | ---: |
+| `before.png` (Built-in, 5.76 ms) | 96,640 | 4.7% |
+| `after.png` (first URP shot) | 48,528 | 2.3% |
+| `after_controlled.png` (URP, 1.98 ms) | **514,944** | **24.8%** |
+
+The controlled capture covers roughly **5.3× the screen area** of the Built-in baseline it is
+compared against. The map fills the frame; in `before.png` it is a small diamond in the middle.
+
+**This error runs against the conclusion rather than for it.** The first report's framing error
+flattered the result, which is why it had to be withdrawn. This one handicaps it: URP rendered
+five times more on-screen geometry and still came in at roughly a third of the latency. Had the
+framing genuinely matched, the URP number could only have been lower.
+
+So the conclusion stands, and stands on firmer ground than the text claimed:
+
+> The scene is overwhelmingly draw-call bound at ~14,000 instances. Halving the draw calls
+> through URP's SRP Batcher drops render latency from ~5.8 ms to ~2.0 ms — measured while
+> covering over five times the screen area.
+
+**What is still not like-for-like**, and cannot easily be made so now: the Built-in figure
+remains a single uncontrolled sample, and re-measuring it properly would mean reverting the
+pipeline. The load-bearing evidence is therefore the draw-call and SetPass counts — 112 → 61 and
+34 → 22 — which are exact counts on both sides and depend on neither camera nor sampling.
+
+The 200-sample method itself is right and worth keeping: locked camera across every sample,
+simulation paused, median reported with quartiles and extremes rather than a mean. That is the
+part to reuse for every later lane.
 
 ---
 
