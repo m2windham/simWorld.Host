@@ -211,7 +211,8 @@ namespace SimWorldHost
 
             if (_terrainMat == null)
             {
-                _terrainMat = new Material(Shader.Find("Unlit/Texture")) { name = "SimWorld/TerrainMat" };
+                Shader shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Texture");
+                _terrainMat = new Material(shader) { name = "SimWorld/TerrainMat" };
             }
             _terrainMat.mainTexture = _terrainTex;
         }
@@ -245,7 +246,19 @@ namespace SimWorldHost
 
             if (_roofMat == null)
             {
-                _roofMat = new Material(Shader.Find("Unlit/Transparent")) { name = "SimWorld/RoofMat" };
+                Shader shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Transparent");
+                _roofMat = new Material(shader) { name = "SimWorld/RoofMat" };
+                if (_roofMat.HasProperty("_Surface"))
+                {
+                    _roofMat.SetFloat("_Surface", 1.0f); // Transparent
+                    _roofMat.SetFloat("_Blend", 0.0f);   // Alpha blend
+                    _roofMat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    _roofMat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    _roofMat.SetFloat("_ZWrite", 0.0f);
+                    _roofMat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                    _roofMat.SetOverrideTag("RenderType", "Transparent");
+                    _roofMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                }
             }
             _roofMat.mainTexture = _roofTex;
         }
@@ -560,9 +573,13 @@ namespace SimWorldHost
 
             // One material per batch key, so colour is an ordinary material property and never an
             // instancing-buffer question. Per-batch is exactly the granularity the brief asks for.
-            mat = new Material(Shader.Find("Standard")) { name = "SimWorld/" + batchKey, enableInstancing = true };
-            mat.SetColor("_Color", StableColor(VisualRegistry.BaseNameOf(batchKey)));
-            mat.SetFloat("_Glossiness", 0.05f);
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Universal Render Pipeline/Simple Lit") ?? Shader.Find("Standard");
+            mat = new Material(shader) { name = "SimWorld/" + batchKey, enableInstancing = true };
+            Color color = StableColor(VisualRegistry.BaseNameOf(batchKey));
+            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
+            if (mat.HasProperty("_Color")) mat.SetColor("_Color", color);
+            if (mat.HasProperty("_Smoothness")) mat.SetFloat("_Smoothness", 0.05f);
+            if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0.05f);
             _matByBatchKey[batchKey] = mat;
             return mat;
         }
