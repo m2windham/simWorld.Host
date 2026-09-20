@@ -118,5 +118,25 @@ namespace SimWorldHost.Tests
             }
             Assert.AreEqual(4, seen.Count, "all 4 Sandstone variants should be selected across thing ids");
         }
+
+        [Test]
+        public void Multi_era_dwellings_ship_four_variants_per_era_and_resolve_cleanly()
+        {
+            string[] eras = { "House_Paleo", "House_Meso", "House_Neo", "House_Chalco" };
+
+            foreach (string era in eras)
+            {
+                Assert.AreEqual(4, VisualRegistry.VariantCount(era), $"{era} must have exactly 4 variants imported.");
+
+                var seen = new System.Collections.Generic.HashSet<GameObject>();
+                for (int thingId = 0; thingId < 256; thingId++)
+                {
+                    GameObject go = VisualRegistry.Resolve(era, thingId);
+                    Assert.IsNotNull(go, $"{era} must resolve to a valid prefab for thingId {thingId}");
+                    seen.Add(go);
+                }
+                Assert.AreEqual(4, seen.Count, $"all 4 variants of {era} should be selected across thing ids");
+            }
+        }
     }
 }
