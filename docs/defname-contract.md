@@ -102,6 +102,41 @@ python3 tools/check_defnames.py --unmodelled # also list core defs still on the 
 planning an asset lane: which of the core's 133 ThingDefs are still drawn as a primitive cube. That
 is a worklist rather than a defect.
 
+## The worklist is 115 long, and one entry is worth the other 114
+
+A raw count of unmodelled defs is a bad priority signal, because the defs are not equally common.
+Ranked by how many instances actually appear on a generated 200×200 interior:
+
+| Def | Instances on one map | Model? |
+| :--- | ---: | :--- |
+| `Sandstone` | 5,500–13,000 (when it is the dominant rock) | ✅ `Sandstone_a..d` |
+| `Granite` | 5,500–13,000 (when it is the dominant rock) | ✅ `Granite_a..d` |
+| **`Limestone`** | **5,500–13,000 (when it is the dominant rock)** | ❌ **missing** |
+| `WildPlant` | ~800–1,900 | ✅ |
+| `Plant_Berry` | hundreds | ✅ |
+| `Bed` | one per citizen, uncapped | ❌ missing |
+| `Wall` + stone variants | ≤40 built, plus ruins | ✅ |
+| `Chunk*` | 7–80 | ✅ |
+| `Mineable*` veins | tens | partly |
+
+**`GenStep_RocksAndMountains` picks the map's dominant rock with
+`rand.Element(Sandstone, Granite, Limestone)` — a uniform choice over three.** Sandstone and
+Granite have models. Limestone does not. So **one map in three still renders as roughly thirteen
+thousand fallback cubes** — the exact scene lane 1 existed to retire, still true a third of the
+time.
+
+This is almost certainly an oversight rather than a decision: `ChunkLimestone_a..d` and
+`WallLimestone` both shipped, so limestone is complete *except* for the one def that accounts for
+nearly all of its instances. And the work is already routine — `Sandstone_a..d` and `Granite_a..d`
+are done, and this is the same job a third time.
+
+**`Bed` is the second priority**, and for a different reason: it is one per citizen and uncapped, it
+is the most numerous thing the settlement actually *builds*, and it is what makes a place read as
+somewhere people live rather than a quarry.
+
+Everything else on the 115 is genuinely long-tail — a `Sculpture`, a `TrapSpike`, one `ResearchBench`.
+Worth doing eventually, worth nothing next to Limestone.
+
 ## What this does not claim
 
 - **Not that the dwelling models are bad.** They are within one order of magnitude of a sensible
