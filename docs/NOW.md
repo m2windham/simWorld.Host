@@ -61,31 +61,21 @@ repository is the only channel both can see. So:
 
 ## The queue, in order
 
-The work is **`docs/requests/REQ_002_ASSET_WORKLIST_AFTER_THE_TWO_CHECKS.md`**. Read
-it in full; each item carries its reasoning and a sourced budget.
+The work from **`docs/requests/REQ_002_ASSET_WORKLIST_AFTER_THE_TWO_CHECKS.md`** has completed:
 
-1. **Limestone** (`Limestone`, 400 triangles). One map in three is cubes until
-   this ships.
-2. **Decimate the twelve chunks.** Up to 1,770× over budget; they drop without
-   bound as the player mines.
-3. **`Bed`** (400 triangles). See "Coming from the core" below: this is now urgent.
-4. **Park the sixteen dwellings.** They wait on a core decision, so do not model
-   more of them.
+1. **Limestone** (`Limestone_a`…`_d`, ~240 triangles) — delivered. Eliminates fallback cubes on limestone maps.
+2. **Decimate the twelve chunks** — delivered. All 12 variants re-generated under tight poly budget; `measure_triangles.py` exits 0 on all sourced budgets.
+3. **`Bed`**, **`Blueprint_Bed`**, **`Frame_Bed`** (~200 triangles) — delivered. Resolves defNames for early settlement construction.
+4. **Park the sixteen dwellings** — completed. Waiting on core multi-cell footprint decisions (`REQ_001`).
+5. **`Plant_TreePoplar`** (`Plant_TreePoplar_a`…`_d`, ~250 triangles) — modeled and ready in `Resources/Models/` for when core merges poplar generation.
 
-REQ-002's own definition of done applies: both tools exit 0, a before/after
-screenshot on a Limestone-dominant map, and relief at or above 0.95× the reference.
+`tools/measure_triangles.py` now exits **0** across all sourced budgets.
 
-## Coming from the core, next
+## What we are working on next
 
-These are about to reach `main` in `m2windham/simWorld`. Neither has a model yet,
-so each will render as the fallback cube:
+See **`docs/requests/REQ_003_CLAUDE_REONBOARD.md`**:
 
-- **`Plant_TreePoplar`**: generated maps get trees, one per ~20 cells of open
-  ground, and citizens fell them for wood. The next most numerous thing on the
-  map after rock.
-- **`Bed`, `Blueprint_Bed`, `Frame_Bed`**: beds are now actually built, one per
-  citizen, from day one. A blueprint and a frame are the same bed at two stages
-  of construction; how they read (ghosted, scaffolded) is a lane 4 call.
-
-Run `python3 tools/check_defnames.py --unmodelled` after pulling the core: it
-lists every core `defName` that still renders as the fallback cube.
+1. **Core Seam**: Claude to land multi-cell footprint support (`REQ_001`) and merge tree/bed mechanics.
+2. **Lane 2 (Materials & Shaders)**: Replace unlit/simple lit shaders with dedicated stylized URP Shader Graph shaders matching the Timberborn aesthetic.
+3. **Lane 6 (UI Shell)**: Modernize or restyle uGUI panels (EdictPanel, settlement status, resource bar).
+4. **Lane 7 (Camera & Diorama Polish)**: Camera framing, tilt-shift / DoF adjustments for diorama god-view feel.
