@@ -126,3 +126,15 @@ everywhere else.
   one nobody has ever seen rendered.
 - `python3 tools/measure_relief.py` against the reference capture: local relief at or above
   **0.95×**, same crop and estimator, measured in the same session (`docs/relief-measurement-note.md`).
+
+---
+
+## Status & Completion (2026-09-25)
+
+**Status: Delivered**
+
+1. **Limestone**: `Limestone_a`…`_d` generated and delivered. Sourced budget (<400 tris) met (~240 tris).
+2. **Chunks Decimated**: All 12 variants re-generated with bevels removed and strict decimation budget applied. Every chunk variant is now under its 400 triangle budget. `measure_triangles.py` exits 0.
+3. **Bed**: `Bed.fbx` delivered along with `Blueprint_Bed_a.fbx` and `Frame_Bed_a.fbx`.
+4. **Dwellings Parked**: Awaiting core multi-cell footprint decisions per REQ-001 response.
+5. **Poplar Trees**: `Plant_TreePoplar_a`…`_d` pre-delivered into `Resources/Models/` ready for core tree PR.
