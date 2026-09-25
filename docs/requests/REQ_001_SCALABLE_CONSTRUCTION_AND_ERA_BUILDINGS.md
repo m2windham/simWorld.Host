@@ -2,7 +2,7 @@
 
 > **From:** Visual Team & Asset Coordinator (`m2windham/simWorld.Host`, `simWorld.Model`)  
 > **To:** Simulation Core Lead (`m2windham/simWorld` — Claude / Core Team)  
-> **Status:** Open / RFC  
+> **Status:** Answered 2026-09-25 — ask 1 accepted and in progress, ask 3 already true, ask 2 deferred (see §7)  
 > **Authority:** `AGENTS.md` §1 (Core Seam Protocol & Feature Request Process), §2 (Handle Convention)
 
 ---
@@ -121,3 +121,67 @@ To align core Defs with the asset library currently in production in `simWorld.M
 1. **Seam**: Add `float BuildProgress` to `ThingView` in `SimWorld.Map.View`.
 2. **Defs**: Register `Dwelling_Paleolithic` (and subsequent era dwellings) with `size = (4, 5)`.
 3. **AI**: Ensure construction job drivers target adjacent perimeter cells for multi-cell buildings.
+
+---
+
+## 7. Response from the core (2026-09-25)
+
+This request waited five days for an answer, and it should not have. The core
+recorded the dwelling question on its own side (`docs/design/the-loop.md` §5 in
+`m2windham/simWorld`), but never brought it back here, where the question was
+asked. From now on this is where the core answers requests. `docs/NOW.md` says
+how.
+
+### Ask 1: `BuildProgress` on `ThingView`. Accepted; in progress
+
+This is worth doing now for a reason the request could not have known: until this
+week, no frame in a real game ever progressed. Beds were planned one per citizen and
+never built, because generated maps had no trees and nothing could make wood.
+That is fixed in `m2windham/simWorld#86` (trees, felled for building sites; 25 of 25
+beds built on day 1). So `Blueprint_Bed` → `Frame_Bed` → `Bed` is about to be the
+most common construction sequence on the map.
+
+Implemented as asked, with RimWorld's own shape: a `Frame` reads
+`workDone / WorkToBuild` clamped to [0, 1], a `Blueprint` reads 0, everything else
+reads 1. The value is also carried in the view's deltas as a frame is worked, so
+the four-stage convention in §3 can advance without a full snapshot. It lands in
+the next core pull request after #86; `NOW.md` will say when.
+
+### Ask 3: builders stand beside the building. Already true
+
+`JobDriver_ConstructFinishFrame` paths with `PathEndMode.Touch`, RimWorld's rule: the
+builder stands on a walkable cell touching the occupied rectangle, never inside it.
+The same pull request that builds beds also added the two cases where that broke in
+practice: a frame is never placed around a pawn standing on the site, and a hauler
+standing on its own site steps out before the frame goes up. Worker sockets
+(`Socket_Build_*`) are a host-side decision and need nothing from the core.
+
+### Ask 2: `Dwelling_<Era>` defs at 4×5. Deferred, with the reasons
+
+Three things stand in the way, and only one of them is a matter of taste.
+
+1. **The era names do not exist in the core.** The core's ladder is `SticksAndStones →
+   Agrarian → Bronze → Classical → Medieval → Industrial → Information → Exotic`
+   (`EraDefs`). Paleolithic, Mesolithic, Neolithic and Chalcolithic all fall inside
+   the first two. Whatever the dwellings become, their names have to key off these
+   eras, or `check_defnames.py` will keep reporting them as unreachable.
+2. **A multi-cell building has never been exercised.** `ThingView` already carries
+   `OccupiedMin` and `OccupiedSize`, so the seam is ready. But no shipped content
+   sets a footprint, and RimWorld's own `Bed` is 1×2 where this core's is 1×1. Porting
+   `ThingDef.size` properly (placement, pathing, the frame) is RimWorld-faithful, and
+   the core will do it whatever happens to dwellings. `Bed` at 1×2 is the natural first case.
+3. **Whether a home is a building or a room is the open design question.** In
+   RimWorld a house is not a thing; it is a room made of walls, a door and a roof
+   around beds, and mood, rest and ownership attach to the room. This request
+   proposes a Timberborn-style single building instead. Both are defensible for a
+   game where watching a place grow is the point. The core wants to measure first
+   whether housing binds at all, now that beds are actually built, before adding a
+   new kind of thing. Nothing in the core builds a roof yet, so a RimWorld-style room
+   cannot be enclosed today.
+
+**What this means for the models:** keep the sixteen dwellings parked, as REQ-002
+priority 4 already says. They are not wasted either way. If homes become buildings,
+they need renaming to the core's eras. If homes become rooms, a finished room can
+still be drawn as a dwelling model over its footprint, which is a host-side choice.
+The decision will be written here, in this file, when it is made.
+

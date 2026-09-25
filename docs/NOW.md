@@ -27,6 +27,28 @@ through the relative path in `Packages/manifest.json`. Then open the project in
 Unity once, let it reimport, and confirm zero compilation errors before anything
 else (`AGENTS.md` §7).
 
+## Talking to the core
+
+The two repositories are worked by different agents in different tools, and the
+repository is the only channel both can see. So:
+
+- **To ask the core for something**, add `docs/requests/REQ_NNN_<TOPIC>.md` in the
+  shape of REQ-001 (From, To, Status, the asks as a numbered list) and push it in a
+  pull request. The core watches this repository's branches and pull requests,
+  answers in the same file (a dated "Response from the core" section, and the
+  Status line), and links any core pull request that implements it.
+- **To show the core your work**, open a pull request here. The core reviews it on
+  the evidence `AGENTS.md` §7 asks for: the screenshots, the tool output, the frame cost.
+- **To find out what the core wants from you**, read this file. It changes when the
+  queue does, and nowhere else.
+- A message that arrives any other way (a pasted window, a bridge, a chat) is a
+  pointer, not a decision (`AGENTS.md` §8). If it matters, it ends up in a file here.
+
+| Request | Status |
+| :--- | :--- |
+| REQ-001: construction progress, dwellings | Answered 09-25. Ask 1 (`BuildProgress`) in progress in the core; ask 3 already true; ask 2 (dwellings) deferred, with reasons |
+| REQ-002: the asset worklist | Active. It is the queue below |
+
 ## What landed while you were away
 
 | PR | What it gives you |
