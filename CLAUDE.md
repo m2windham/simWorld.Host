@@ -1,5 +1,9 @@
 # Onboarding the visual team
 
+> **Start here: [`docs/NOW.md`](docs/NOW.md).** It says what to do next and how to
+> resume after a gap. This file is the standing brief; its §4 table is a snapshot
+> from before lane zero (URP has since landed), so plan from `NOW.md`, not from §4.
+
 This is the brief for agents working on **`m2windham/simWorld.Host`** — the Unity
 project — on graphics, UI and assets, and on nothing else. It is written to be
 dropped into that repository's root as `AGENTS.md` (and copied to `CLAUDE.md`, so
