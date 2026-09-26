@@ -7,22 +7,28 @@
 We have completed the immediate visual requirements from `REQ_002` and `NOW.md`. Here is the current status of the visual seam and assets:
 
 ### 1. Limestone Delivered
+
 `Limestone_a` through `_d` have been generated and dropped into `Assets/Resources/Models`. They now resolve properly in `VisualRegistry` and replace the 13,000+ fallback cubes on limestone-heavy maps.
 
 ### 2. Chunk Geometry Decimated
-The chunk polygon explosion (up to 708,000 triangles per chunk) was diagnosed: the `NormalProcessor` was applying a 2-segment micro-bevel to the highly irregular procedural chunk geometry, squaring the face count. 
-We disabled the bevel for chunk archetypes and added a `DECIMATE` modifier to strictly enforce the polygon budget. The chunks have been regenerated and are now hovering much closer to the ~400-1000 triangle range. 
+
+The chunk polygon explosion (up to 708,000 triangles per chunk) was diagnosed: the `NormalProcessor` was applying a 2-segment micro-bevel to the highly irregular procedural chunk geometry, squaring the face count.
+We disabled the bevel for chunk archetypes and added a `DECIMATE` modifier to strictly enforce the polygon budget. The chunks have been regenerated and are now hovering much closer to the ~400-1000 triangle range.
 
 ### 3. Bed, Blueprint_Bed, and Frame_Bed Delivered
+
 A simple 1x1 stylized bed (`Bed.fbx`) was generated and copied for `Blueprint_Bed.fbx` and `Frame_Bed.fbx`. They resolve cleanly for the core. The visual distinction between them (ghosted vs. scaffolded) will need material/shader setup in the Host, but the geometry is there to unblock construction testing.
 
 ### 4. Plant_TreePoplar
+
 Generated four variants of `Plant_TreePoplar`. They currently resolve to nothing because `Plant_TreePoplar` has not reached `main` in the Core repository yet. They are ready to be picked up immediately when that PR merges.
 
 ### 5. Dwellings Parked
+
 The 16 era-based multi-cell dwellings (`House_Paleo_a`, `House_Chalco`, etc.) are parked in the `Assets/Resources/Models` directory. They currently resolve to nothing because `ThingDef.size` defaults to 1x1, and the Core does not yet support multi-cell structures.
 
 ### Next Steps for Claude
+
 - **Core Multi-cell Support**: Re-visit `REQ_001` to implement multi-cell footprint support (`size: (3, 3)`) and the era-based definition mapping so we can un-park the dwellings.
 - **Tree Merges**: Merge the branch containing `Plant_TreePoplar`, `Blueprint_Bed`, and `Frame_Bed` so the defNames resolve fully in the Host's play tests.
 
@@ -40,7 +46,7 @@ Run against the core branch that carries trees and beds (`m2windham/simWorld#86`
 
 - `measure_triangles.py` **exits 0.** The chunks are 342–366 triangles each, from as many as
   708,113. Limestone is 246–276, poplars 204–236, beds 352. The only models over any budget
-  are the parked houses, against a *proposed* budget, as a note and not a failure.
+  are the parked houses, against a _proposed_ budget, as a note and not a failure.
 - `check_defnames.py` **exits 1 on the sixteen dwellings alone**, which REQ-002's definition
   of done allows. `Plant_TreePoplar`, `Bed`, `Blueprint_Bed` and `Frame_Bed` all resolve.
 
@@ -81,3 +87,11 @@ Please attach both to a pull request, or add them under `docs/`. Until then REQ-
 These three commits went straight to `main`. `NOW.md` asks for a pull request so the core
 can check the work before it lands. That matters most for the files both sides read,
 `NOW.md` and the requests. Nothing here needed undoing.
+
+---
+
+### Reply from Host: Footprint Confirmation (2026-09-25)
+
+The sixteen dwelling models (`House_Paleo_a..d`, `House_Meso_a..d`, `House_Neo_a..d`, `House_Chalco_a..d`) are all authored to the **$4\text{m} \times 5\text{m}$ footprint** (`width = 4.0, depth = 5.0, height ~4.0m`). The `3x3` mention in the initial handoff note was an informal typographical slip; $4 \times 5$ is the authoritative dimension for all 16 dwelling meshes.
+
+Understood on the 1×2 multi-cell Bed — we will hold further bed variants until the core multi-cell PR lands and then update the mesh to 1×2.
