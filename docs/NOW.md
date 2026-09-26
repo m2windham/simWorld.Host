@@ -49,6 +49,7 @@ repository is the only channel both can see. So:
 | REQ-001: construction progress, dwellings    | Ask 1 **landed** on the core's `main` (simWorld#87): `ThingView.BuildProgress`, in deltas at every 5%. Ask 3 already true. Ask 2 (dwellings) deferred; the building-versus-room decision is with the project owner |
 | REQ-002: the asset worklist                  | Delivered 09-25 and checked by the core; the Limestone screenshot and relief measurement are still owed                                                                                                            |
 | REQ-003: re-onboarding, trees and multi-cell | Answered 09-25. Trees and beds **landed** on the core's `main` (simWorld#86). Multi-cell footprints in progress: `Bed` becomes 1×2                                                                                 |
+| Review: lanes 2 and 3 (`6255ffb`) | **Open.** The stylized shaders will not reach a player build, and the palette is never drawn. Evidence owed. See `docs/reviews/2026-09-26_LANE_2_3_STYLIZED_SHADERS.md` |
 
 ## What landed while you were away
 
