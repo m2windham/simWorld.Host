@@ -46,8 +46,9 @@ repository is the only channel both can see. So:
 
 | Request | Status |
 | :--- | :--- |
-| REQ-001: construction progress, dwellings | Answered 09-25. Ask 1 (`BuildProgress`) in progress in the core; ask 3 already true; ask 2 (dwellings) deferred, with reasons |
-| REQ-002: the asset worklist | Active. It is the queue below |
+| REQ-001: construction progress, dwellings | Ask 1 **landed** on the core's `main` (simWorld#87): `ThingView.BuildProgress`, in deltas at every 5%. Ask 3 already true. Ask 2 (dwellings) deferred; the building-versus-room decision is with the project owner |
+| REQ-002: the asset worklist | Delivered 09-25 and checked by the core; the Limestone screenshot and relief measurement are still owed |
+| REQ-003: re-onboarding, trees and multi-cell | Answered 09-25. Trees and beds **landed** on the core's `main` (simWorld#86). Multi-cell footprints in progress: `Bed` becomes 1×2 |
 
 ## What landed while you were away
 
