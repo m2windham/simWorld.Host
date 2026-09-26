@@ -211,7 +211,8 @@ namespace SimWorldHost
 
             if (_terrainMat == null)
             {
-                _terrainMat = new Material(RequireShader("Universal Render Pipeline/Unlit")) { name = "SimWorld/TerrainMat" };
+                Shader terrainShader = Shader.Find("SimWorld/StylizedTerrain") ?? RequireShader("Universal Render Pipeline/Unlit");
+                _terrainMat = new Material(terrainShader) { name = "SimWorld/TerrainMat" };
             }
             _terrainMat.mainTexture = _terrainTex;
         }
@@ -571,7 +572,7 @@ namespace SimWorldHost
 
             // One material per batch key, so colour is an ordinary material property and never an
             // instancing-buffer question. Per-batch is exactly the granularity the brief asks for.
-            Shader shader = RequireShader("Universal Render Pipeline/Lit");
+            Shader shader = Shader.Find("SimWorld/StylizedLit") ?? RequireShader("Universal Render Pipeline/Lit");
             mat = new Material(shader) { name = "SimWorld/" + batchKey, enableInstancing = true };
             Color color = StableColor(VisualRegistry.BaseNameOf(batchKey));
             if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);

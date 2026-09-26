@@ -4,7 +4,7 @@ This is the one file that changes as the work moves. `AGENTS.md` is the standing
 brief. It does not change often, and its §4 table is a snapshot from before lane
 zero, so do not plan from it. Plan from this file.
 
-*Updated 2026-09-25.*
+_Updated 2026-09-25._
 
 ## If you are picking this up after a gap
 
@@ -44,21 +44,22 @@ repository is the only channel both can see. So:
 - A message that arrives any other way (a pasted window, a bridge, a chat) is a
   pointer, not a decision (`AGENTS.md` §8). If it matters, it ends up in a file here.
 
-| Request | Status |
-| :--- | :--- |
-| REQ-001: construction progress, dwellings | Ask 1 **landed** on the core's `main` (simWorld#87): `ThingView.BuildProgress`, in deltas at every 5%. Ask 3 already true. Ask 2 (dwellings) deferred; the building-versus-room decision is with the project owner |
-| REQ-002: the asset worklist | Delivered 09-25 and checked by the core; the Limestone screenshot and relief measurement are still owed |
-| REQ-003: re-onboarding, trees and multi-cell | Answered 09-25. Trees and beds **landed** on the core's `main` (simWorld#86). Multi-cell footprints in progress: `Bed` becomes 1×2 |
+| Request                                      | Status                                                                                                                                                                                                             |
+| :------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| REQ-001: construction progress, dwellings    | Ask 1 **landed** on the core's `main` (simWorld#87): `ThingView.BuildProgress`, in deltas at every 5%. Ask 3 already true. Ask 2 (dwellings) deferred; the building-versus-room decision is with the project owner |
+| REQ-002: the asset worklist                  | Delivered 09-25 and checked by the core; the Limestone screenshot and relief measurement are still owed                                                                                                            |
+| REQ-003: re-onboarding, trees and multi-cell | Answered 09-25. Trees and beds **landed** on the core's `main` (simWorld#86). Multi-cell footprints in progress: `Bed` becomes 1×2                                                                                 |
 
 ## What landed while you were away
 
-| PR | What it gives you |
-| :--- | :--- |
-| #7 | The relief floor is a ratio against the reference capture, not an absolute number |
-| #8 | `tools/measure_triangles.py`: the draw-call counter cannot see triangles, and this can |
-| #9 | `tools/check_defnames.py`: sixteen dwelling models resolve to no core `defName` |
-| #10 | Limestone found missing: one map in three still renders as ~13,000 fallback cubes |
-| #11 | `docs/requests/REQ_002_…`: the worklist the two tools produced |
+| PR         | What it gives you                                                                                                                                |
+| :--------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| #7         | The relief floor is a ratio against the reference capture, not an absolute number                                                                |
+| #8         | `tools/measure_triangles.py`: the draw-call counter cannot see triangles, and this can                                                           |
+| #9         | `tools/check_defnames.py`: sixteen dwelling models resolve to no core `defName`                                                                  |
+| #10        | Limestone found missing: one map in three still renders as ~13,000 fallback cubes                                                                |
+| #11        | `docs/requests/REQ_002_…`: the worklist the two tools produced                                                                                   |
+| Lane 2 & 3 | `SimWorld/StylizedLit`, `SimWorld/StylizedTerrain`, `SimWorld/StylizedWater` shaders + Timberborn material palette. 45/45 EditMode tests passing |
 
 ## The queue, in order
 
@@ -76,7 +77,7 @@ The work from **`docs/requests/REQ_002_ASSET_WORKLIST_AFTER_THE_TWO_CHECKS.md`**
 
 See **`docs/requests/REQ_003_CLAUDE_REONBOARD.md`**:
 
-1. **Core Seam**: Claude to land multi-cell footprint support (`REQ_001`) and merge tree/bed mechanics.
-2. **Lane 2 (Materials & Shaders)**: Replace unlit/simple lit shaders with dedicated stylized URP Shader Graph shaders matching the Timberborn aesthetic.
+1. **Core Seam**: Claude to land multi-cell footprint support (`REQ_001`) and merge tree/bed mechanics (`m2windham/simWorld#86`).
+2. **Lane 5 (Characters / Pawns)**: Low-poly stylized settler character models (`Human_a`…`_d`) with clear silhouettes and timberborn proportions to replace primitive capsules.
 3. **Lane 6 (UI Shell)**: Modernize or restyle uGUI panels (EdictPanel, settlement status, resource bar).
 4. **Lane 7 (Camera & Diorama Polish)**: Camera framing, tilt-shift / DoF adjustments for diorama god-view feel.

@@ -82,3 +82,7 @@ crashlytics-build.properties
 
 # Hand-made backups of package manifests, kept locally while debugging imports.
 *.bak
+
+# Multi-agent coordination scratch and test run logs
+/.agents/
+/test-results.xml
