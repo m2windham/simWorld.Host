@@ -39,6 +39,9 @@ namespace SimWorldHost.EditorTools
         private void OnPostprocessModel(GameObject root)
         {
             if (!assetPath.StartsWith(ModelsRoot)) return;
+            // Declared so the import result is reproducible (and reimports when the material changes);
+            // without it the importer reports "generated inconsistent result" for every model.
+            context.DependsOnSourceAsset(PaletteMaterial);
             Material palette = AssetDatabase.LoadAssetAtPath<Material>(PaletteMaterial);
 
             foreach (MeshRenderer renderer in root.GetComponentsInChildren<MeshRenderer>(true))
