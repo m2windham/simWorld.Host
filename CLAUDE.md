@@ -15,6 +15,30 @@ together is a contract neither side can see the other enforcing.
 
 ---
 
+## 0. Environment and how to run (rebuilt 2026-10-06)
+
+The old `A:` drive died in September 2026. Everything now lives on `H:` and any
+`A:\`, `F:\` or `I:\` path you meet in a doc or config is stale; fix it to `H:`.
+
+| What | Where / how |
+| --- | --- |
+| The three repositories, siblings | `H:\dev\simWorld` (core), `H:\dev\simWorld.Host` (this), `H:\dev\simWorld.Model` (asset pipeline) |
+| Unity Editor | `6000.5.0f1` at `H:\tools\Unity`, installed and driven by the **Unity CLI** (`unity`, on PATH) |
+| Open the project | `unity open H:\dev\simWorld.Host` (first open rebuilds `Library/`, a few minutes) |
+| Is an Editor connected? | `unity status` → one instance, state `ready` (the `com.unity.pipeline` package in the manifest provides this) |
+| Drive it | `unity command` lists what the Editor exposes; `unity command eval '<C#>'`, `unity command eval_file --file x.cs`, `unity command screenshot --view game --output x.png`, `unity command run_tests --mode EditMode [--filter X]` |
+| From Claude Code | the `unity-editor-mcp` MCP server is the same bridge as `unity command` |
+| Force a recompile | `unity command eval 'UnityEditor.AssetDatabase.Refresh(); UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation(); return "ok";'` (the Editor otherwise waits for window focus) |
+| Core sanity | `python tools/check_defnames.py` (every model name is a core defName), `python tools/measure_triangles.py` (budgets; counts visual + UCX together) |
+| Python | `python` is 3.12 via uv; both tools run from the repo root |
+| Art | never hand-edit an FBX: generators live in `simWorld.Model`; `tools/regenerate_all.py` there rebuilds and delivers everything, `uv run swm …` handles TOML-ordered families |
+| Colour | `Assets/Art/Palette/Palette.png` + `M_Palette.mat`; `Assets/Editor/PaletteModelPostprocessor.cs` remaps every imported model to it and strips `UCX_` renderers. Change colours in `simWorld.Model/palette/palette.toml`, not here |
+
+Blender 5.2 (`H:\tools\Blender`) with the `blender` / `blender-lab` MCP servers is
+the modelling side; it is the Model repository's concern, not this one's.
+
+---
+
 ## 1. What you own, and what you must never touch
 
 **You own** everything under `Assets/` and `ProjectSettings/` in the host
@@ -63,37 +87,34 @@ Three consequences you will feel daily:
 
 ---
 
-## 3. The aesthetic target: Timberborn
+## 3. The aesthetic: two registers (decided 2026-10-06)
 
-The direction is Timberborn's look, adapted to a settlement on real terrain.
+The direction is our own, Whiskerwood-adjacent in spirit, not a Timberborn
+clone. The canonical statement is `simWorld.Model/orders/MANIFEST.md`, "Style:
+two registers"; this is the summary the host must render to:
 
-Read of the target, to be checked against reference shots before anyone commits
-to a shader — this is a description, not a spec handed down from the source:
-
-- **Stylized-realistic, not cartoon.** Believable proportions, simplified
-  surface detail. The silhouette does the work; the texture supports it.
-- **Warm, high-value-contrast palette.** Wood is the hero material. Greens and
-  water blues carry the rest. Things read at a distance because their values
-  separate, not because they are outlined.
-- **Chunky, legible silhouettes.** A building is identifiable as a shape before
-  any detail resolves. This matters enormously at god-view zoom and it is the
-  single most transferable part of the look.
-- **Soft warm key light, strong ambient fill.** Gentle shadows. Harsh contact
-  shadows read as "realistic engine defaults" and are the fastest way to lose
-  the aesthetic.
-- **Verticality and terracing.** Timberborn's signature is layered
-  construction read from a tilted camera. Settlements on sloped terrain are the
-  natural home for this.
-- **Diorama framing.** A slight tilt-shift and shallow depth of field at the god
-  scale makes a settlement read as a model on a table, which is exactly the
-  fantasy of a god game.
+- **Land** (terrain, rocks, chunks, ores, flora): warm earth palette, low contrast
+  between neighbouring materials, softer and rounder silhouettes, subtle per-facet
+  value noise. Nothing on the land has a hard outline.
+- **Settlement** (walls, beds, huts, tools, buildings): abrupt by design: a
+  narrower, more saturated palette with dark trim, hard edges and angular massing,
+  higher value contrast against the ground. Built things are the only things with
+  sharp corners and dark lines, so the eye finds the settlement instantly at
+  ViewSize 60.
+- **Mood**: fixed soft daylight, the hour-14 baseline `TimeOfDay.cs` already
+  provides; strong ambient fill, gentle shadows, SSAO doing the grounding.
+- **No painterly texture detail.** Colour is a flat swatch per face from the
+  palette atlas. Identity comes from silhouette, the two-register contrast and the
+  palette, never from surface rendering.
+- **Chunky, legible silhouettes** and **diorama framing** (tilt-shift, shallow
+  depth of field at the god scale) still apply; they are the most transferable
+  part of the Timberborn/Whiskerwood family and we keep them.
 - **The world moves when you are not touching it.** Foliage sway, water flow,
-  smoke, idle motion. Low-cost, high-return, and it is what separates "a
-  simulation is running" from "a place exists".
+  smoke, idle motion: low cost, high return.
 
-UI, in the same language: clean flat panels with warm accents, high information
-density but grouped, iconography that survives being small, and type that is
-legible at the smallest size you actually ship.
+UI, in the settlement register: clean flat panels with warm accents and dark
+trim, high information density but grouped, iconography that survives being
+small, type legible at the smallest size you actually ship.
 
 ---
 
@@ -110,7 +131,7 @@ writing it down is so you can check it, not so you can skip checking.
 | Renderer | `MapRenderer.cs`, 633 lines, instanced drawing | Measured at roughly 13,000 instances on a real map. |
 | Asset seam | `VisualRegistry.cs` | The most important file in the repo for you. |
 | UI | uGUI with legacy `UnityEngine.UI.Text` (`EdictPanel.cs`) | Not TextMeshPro, not UI Toolkit. A choice to make. |
-| Editor bridge | `com.anklebreaker.unity-mcp` in the manifest | Agents can drive the real editor. See §7. |
+| Editor bridge | `com.unity.pipeline` in the manifest (Unity CLI); the older `com.anklebreaker.unity-mcp` also remains | Agents can drive the real editor. See §0 and §7. |
 | Core package reference | `file:../../simWorld/src/SimWorld.Core` | **Relative, and it must stay relative.** |
 
 That last row is load-bearing. Unity's Package Manager writes an *absolute* path
@@ -212,7 +233,7 @@ Suggested split, after lane zero lands:
 | --- | --- | --- |
 | 0. Pipeline | URP migration, project settings, quality tiers | `ProjectSettings/*`, `Packages/manifest.json`, the URP asset |
 | 1. Lighting and post | Sun, ambient, colour grading, SSAO, DoF, time of day | Lighting settings, volume profiles, a new `TimeOfDay.cs` |
-| 2. Materials and shaders | The stylized lit shader, the material palette | New `.shadergraph`, new `.mat` — never an existing one |
+| 2. Materials and shaders | Superseded by the palette atlas: colour is per-face UVs into `Palette.png`, one shared `M_Palette.mat` for every model. Lane 2 now owns only that material, the import hook, and any terrain/water shader that must read the same palette | `Assets/Art/Palette/*`, `Assets/Editor/PaletteModelPostprocessor.cs` |
 | 3. Terrain and water | Ground, cliffs, terracing, water surface | Terrain shader, water shader, their materials |
 | 4. Structures | Buildings, walls, doors, storage | New `.fbx` under `Resources/Models/` |
 | 5. Characters | Pawn meshes, silhouettes, idle motion | New `.fbx`, animator assets |
@@ -239,19 +260,27 @@ everything that was asked of it.
 
 So a lane is not done until it has been *seen working in the editor*.
 
-The host has `com.anklebreaker.unity-mcp` installed, which means an agent can
-drive the real Unity editor rather than reasoning about it. Use it:
+The host carries `com.unity.pipeline`, so an agent can drive the real Unity
+Editor through the Unity CLI (or the `unity-editor-mcp` server, which is the same
+bridge) rather than reasoning about it. Use it:
 
-1. **`unity_get_compilation_errors`** — zero, every time, before anything else.
-2. **`unity_play_mode`** then **`unity_screenshot_game`** — capture the actual
-   frame. Attach it to the pull request. A screenshot is the only artifact in
-   this whole discipline that cannot be argued with.
-3. **`unity_console_log`** — read it. A scene that renders while throwing an
+1. **`unity command console_status`** — zero compile errors, every time, before
+   anything else. If `unity status` cannot connect, suspect Safe Mode from a
+   compile error: `unity pipeline list` says so.
+2. **`unity command editor_play`** then **`unity command screenshot --view game
+   --output <png>`** — capture the actual frame. Attach it to the pull request. A
+   screenshot is the only artifact in this whole discipline that cannot be argued
+   with. (`capture_scene_view` does the Scene view.)
+3. **`unity command console`** — read it. A scene that renders while throwing an
    exception every frame is not working.
-4. **EditMode tests** — `Assets/Tests/EditMode/` already exists and already has
-   a seam test. Add to it. A renderer change that cannot be tested at all should
-   say so and explain why, rather than quietly shipping untested.
-5. **Frame cost on a real map**, for anything touching `MapRenderer.cs`,
+4. **EditMode tests** — `unity command run_tests --mode EditMode` runs
+   `Assets/Tests/EditMode/` inside the live Editor. Add to it. A renderer change
+   that cannot be tested at all should say so and explain why, rather than
+   quietly shipping untested.
+5. **The two tools** — `python tools/check_defnames.py` and
+   `python tools/measure_triangles.py` exit 0 (the four parked `House_*` families
+   are the accepted exception for the first).
+6. **Frame cost on a real map**, for anything touching `MapRenderer.cs`,
    materials or shaders. Before and after, both in the pull request.
 
 Take the screenshot **before and after**. A visual change with no before shot is

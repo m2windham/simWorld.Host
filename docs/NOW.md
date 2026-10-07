@@ -4,28 +4,48 @@ This is the one file that changes as the work moves. `AGENTS.md` is the standing
 brief. It does not change often, and its §4 table is a snapshot from before lane
 zero, so do not plan from it. Plan from this file.
 
-_Updated 2026-09-25._
+_Updated 2026-10-06._
 
 ## If you are picking this up after a gap
 
-The last visual commit on `main` is `6151f13` (models dropped, 09-20). Five pull
-requests have landed since. Sync before you touch anything:
+**The machine changed under this project in late September 2026**: the `A:` drive
+died and everything was re-cloned to `H:\dev`. Read `AGENTS.md` §0 for the new
+environment before anything else. Sync before you touch anything:
 
 ```text
-cd A:\simWorld.Host
+cd H:\dev\simWorld.Host
 git status                  # uncommitted work? commit it to a branch first
 git switch main
 git pull --ff-only
 
-cd A:\simWorld
+cd H:\dev\simWorld
 git switch main
 git pull --ff-only
 ```
 
-Both repositories must stay siblings under `A:\`, because the host reaches the core
-through the relative path in `Packages/manifest.json`. Then open the project in
-Unity once, let it reimport, and confirm zero compilation errors before anything
-else (`AGENTS.md` §7).
+The three repositories must stay siblings under `H:\dev` (`simWorld`,
+`simWorld.Host`, `simWorld.Model`), because the host reaches the core through the
+relative path in `Packages/manifest.json` and the asset pipeline delivers into
+`../simWorld.Host`. Then open the project (`unity open H:\dev\simWorld.Host`), let
+it reimport, and confirm zero compilation errors (`AGENTS.md` §7).
+
+## What changed on 2026-10-06
+
+- **The look is decided and recorded**: "two registers", a soft warm-earth land
+  with a crisp, dark-trimmed settlement set on it. The statement lives in
+  `simWorld.Model/orders/MANIFEST.md` ("Style: two registers") and supersedes the
+  Timberborn target.
+- **Colour now travels inside the mesh.** Every face's UVs point at a swatch in
+  `Assets/Art/Palette/Palette.png`; every model under `Resources/Models` draws
+  with the one shared `M_Palette.mat` (`Assets/Editor/PaletteModelPostprocessor.cs`
+  remaps on import and strips `UCX_` renderers). The FBX's own materials are
+  ignored. This closes the open review of lanes 2 and 3: the stylized shaders and
+  their material palette were never drawn, and now are not needed.
+- **All models were regenerated** through `simWorld.Model` on Blender 5.2 with the
+  palette; `CollapsedRocks_a..d` were added; the two Tier-3 tests no longer pin a
+  file count.
+- **Unity is driven through the Unity CLI** (`unity status`, `unity command …`),
+  not the old AnkleBreaker bridge.
 
 ## Talking to the core
 
@@ -49,7 +69,7 @@ repository is the only channel both can see. So:
 | REQ-001: construction progress, dwellings    | Ask 1 **landed** on the core's `main` (simWorld#87): `ThingView.BuildProgress`, in deltas at every 5%. Ask 3 already true. Ask 2 (dwellings) deferred; the building-versus-room decision is with the project owner |
 | REQ-002: the asset worklist                  | Delivered 09-25 and checked by the core; the Limestone screenshot and relief measurement are still owed                                                                                                            |
 | REQ-003: re-onboarding, trees and multi-cell | Answered 09-25. Trees and beds landed (simWorld#86). **Multi-cell footprints landed** (simWorld#88): `Bed` is now **1×2** on the core's `main`, placed at any of four facings, with the sleeper on the head cell (`Position`). The 1×1 bed model needs its 1×2 update |
-| Review: lanes 2 and 3 (`6255ffb`) | **Open.** The stylized shaders will not reach a player build, and the palette is never drawn. Evidence owed. See `docs/reviews/2026-09-26_LANE_2_3_STYLIZED_SHADERS.md` |
+| Review: lanes 2 and 3 (`6255ffb`) | **Superseded 2026-10-06.** Colour now comes from the palette atlas through the import hook; the stylized shaders and their material palette are unused. See `docs/reviews/2026-09-26_LANE_2_3_STYLIZED_SHADERS.md` for the original finding |
 
 ## What landed while you were away
 
@@ -76,9 +96,26 @@ The work from **`docs/requests/REQ_002_ASSET_WORKLIST_AFTER_THE_TWO_CHECKS.md`**
 
 ## What we are working on next
 
-See **`docs/requests/REQ_003_CLAUDE_REONBOARD.md`**:
+1. **`Bed` is 1×2 on the core's `main`** (simWorld#88); the shipped 1×1 bed model
+   needs its 1×2 update through `simWorld.Model` (`bed_simple` generator, then
+   `tools/regenerate_all.py --only bed_simple`).
+2. **Palette tuning**: the first pass of `simWorld.Model/palette/palette.toml` is a
+   draft. Judge it on an in-Editor screenshot at ViewSize 60 and 12, change
+   swatches there, rebuild (`tools/build_palette.py`), regenerate.
+3. **Lane 5 (Characters / Pawns)**: low-poly settler models (`Human_a`…`_d`) in the
+   settlement register, replacing primitive capsules.
+4. **Lane 6 (UI Shell)**: restyle the uGUI panels (EdictPanel, settlement status,
+   resource bar) in the same language.
+5. **Lane 7 (Camera & Diorama Polish)**: framing, zoom bands, tilt-shift / DoF.
+6. **Construction stages**: `Blueprint_Bed_a` and `Frame_Bed_a` are currently plain
+   bed geometry in the palette; they should read as a ghost outline and a bare
+   frame. `Door` and `StorageHut` are placeholders (a thin slab, a box) with the
+   right colours and need real generators.
 
-1. **Core Seam**: Claude to land multi-cell footprint support (`REQ_001`) and merge tree/bed mechanics (`m2windham/simWorld#86`).
-2. **Lane 5 (Characters / Pawns)**: Low-poly stylized settler character models (`Human_a`…`_d`) with clear silhouettes and timberborn proportions to replace primitive capsules.
-3. **Lane 6 (UI Shell)**: Modernize or restyle uGUI panels (EdictPanel, settlement status, resource bar).
-4. **Lane 7 (Camera & Diorama Polish)**: Camera framing, tilt-shift / DoF adjustments for diorama god-view feel.
+Twenty-three models (Granite, Sandstone, WildPlant, Plant_Berry, the walls, Door,
+StorageHut, the bed stages) were rebuilt with new seeds because their original
+build parameters were never recorded; `tools/validate_blender.py`'s `EXTRAS` table
+now records them so this cannot recur.
+
+Asset work happens in `simWorld.Model`, never by hand-editing an FBX: write or
+adjust a generator, regenerate, deliver, run the two Host checks, screenshot.
