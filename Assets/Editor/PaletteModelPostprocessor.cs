@@ -19,6 +19,11 @@ namespace SimWorldHost.EditorTools
         // pipeline's convex generator emits UCX_, its box generator (walls, doors) emits UBX_.
         private static readonly string[] CollisionPrefixes = { "UCX_", "UBX_", "USP_", "UCP_" };
 
+        // Bump on every behavioural change: the importer only redoes existing results when this
+        // changes, so a code-only fix otherwise leaves old prefabs in Library/ untouched.
+        // 1: UBX_/USP_/UCP_ hulls stripped like UCX_ (902cf54).
+        public override uint GetVersion() => 1;
+
         private static bool IsCollisionHull(string name)
         {
             foreach (string prefix in CollisionPrefixes)
