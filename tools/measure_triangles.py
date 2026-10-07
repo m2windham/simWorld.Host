@@ -46,6 +46,7 @@ SOURCED, PROPOSED = "sourced", "proposed"
 
 BUDGETS = {
     "Chunk": (400, SOURCED),
+    "CollapsedRocks": (400, SOURCED),
     "Sandstone": (400, SOURCED),
     "Granite": (400, SOURCED),
     "Limestone": (400, SOURCED),
