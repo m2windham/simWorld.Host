@@ -15,6 +15,17 @@ namespace SimWorldHost.EditorTools
         private const string PalettePng = "Assets/Art/Palette/Palette.png";
         private const string PaletteMaterial = "Assets/Art/Palette/M_Palette.mat";
 
+        // The four standard collision-mesh prefixes: convex hull, box, sphere, capsule. The
+        // pipeline's convex generator emits UCX_, its box generator (walls, doors) emits UBX_.
+        private static readonly string[] CollisionPrefixes = { "UCX_", "UBX_", "USP_", "UCP_" };
+
+        private static bool IsCollisionHull(string name)
+        {
+            foreach (string prefix in CollisionPrefixes)
+                if (name.StartsWith(prefix)) return true;
+            return false;
+        }
+
         private void OnPreprocessModel()
         {
             if (!assetPath.StartsWith(ModelsRoot)) return;
@@ -46,7 +57,7 @@ namespace SimWorldHost.EditorTools
 
             foreach (MeshRenderer renderer in root.GetComponentsInChildren<MeshRenderer>(true))
             {
-                if (renderer.gameObject.name.StartsWith("UCX_"))
+                if (IsCollisionHull(renderer.gameObject.name))
                 {
                     // Collision hull: keep the MeshFilter for a collider, never render it.
                     Object.DestroyImmediate(renderer);
