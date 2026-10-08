@@ -70,6 +70,7 @@ repository is the only channel both can see. So:
 | REQ-002: the asset worklist                  | Delivered 09-25 and checked by the core; the Limestone screenshot and relief measurement are still owed                                                                                                            |
 | REQ-003: re-onboarding, trees and multi-cell | Answered 09-25. Trees and beds landed (simWorld#86). **Multi-cell footprints landed** (simWorld#88): `Bed` is now **1×2** on the core's `main`, placed at any of four facings, with the sleeper on the head cell (`Position`). The 1×1 bed model needs its 1×2 update |
 | Review: lanes 2 and 3 (`6255ffb`) | **Superseded 2026-10-06.** Colour now comes from the palette atlas through the import hook; the stylized shaders and their material palette are unused. See `docs/reviews/2026-09-26_LANE_2_3_STYLIZED_SHADERS.md` for the original finding |
+| Review: models in the game view (`8e9b636`) | **Open, 2026-10-08.** `MapRenderer` still places models with the box transform (they float, plants squash, nothing turns), draws them with hashed colours instead of `M_Palette`, and hashes terrain colours; the 12 chunk meshes are 34–62% inside out. Renders and asks: `docs/reviews/2026-10-08_MODELS_IN_THE_GAME_VIEW.md` |
 
 ## What landed while you were away
 
